@@ -156,9 +156,10 @@ protocol are identical.
 - The validation subset is used for checkpoint selection; the reserved test
   subset must not be used for early stopping or model selection.
 - Random seeds and the resolved configuration should be saved with every run.
-- Report whether mIoU and mDice include the background class or use a macro
-  average over foreground classes only. The same convention must be used in
-  code, tables, figures, and manuscript text.
+- The canonical evaluator reports mIoU and mDice as macro-averages over the
+  present foreground classes (class IDs 1-4); background (class ID 0) is
+  excluded from both means. Per-class metrics and pixel accuracy remain
+  available separately.
 - Static FLOPs are not hardware-dependent inference latency. Latency,
   throughput, and memory should be measured separately if deployment claims are
   made.

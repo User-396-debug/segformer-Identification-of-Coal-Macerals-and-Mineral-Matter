@@ -674,7 +674,7 @@ class EnhancementTrainer:
         return avg_loss, avg_iou, avg_class_ious
     
     def compute_iou(self, pred, target, num_classes=5):
-        """计算IoU（修复版本，正确处理空类别和边界情况）"""
+        """计算逐类IoU及前景类别宏平均值（类别0为背景）。"""
         ious = []
         
         for cls in range(num_classes):
@@ -684,26 +684,13 @@ class EnhancementTrainer:
             intersection = (pred_cls & target_cls).sum().float()
             union = (pred_cls | target_cls).sum().float()
             
-            if union == 0:
-                # 如果union为0，有两种情况：
-                # 1. 该类别在预测和真实标签中都不存在 -> IoU未定义，设为0（不参与平均）
-                # 2. 该类别在真实标签中存在但预测中没有 -> IoU = 0
-                # 实际上，如果union=0且target中有该类别，那么pred中肯定没有，所以intersection=0
-                # 如果union=0且target中没有该类别，那么pred中也没有，intersection=0
-                # 所以union=0时，intersection一定为0
-                if target_cls.sum() > 0:
-                    # 真实标签中有，但预测中没有，IoU = 0
-                    iou = 0.0
-                else:
-                    # 真实标签中也没有，IoU未定义，设为0（但会在平均时考虑）
-                    iou = 0.0
-            else:
-                iou = (intersection / union).item()
+            iou = float("nan") if union == 0 else (intersection / union).item()
             
             ious.append(iou)
         
-        # 计算平均IoU（所有类别都参与，包括0值）
-        mean_iou = sum(ious) / len(ious)
+        # 论文报告的mIoU只对出现的前景类别求宏平均，不包含背景类别0。
+        foreground_ious = [iou for iou in ious[1:] if not np.isnan(iou)]
+        mean_iou = float(np.mean(foreground_ious)) if foreground_ious else float("nan")
         
         # 转换为tensor
         ious_tensor = torch.tensor(ious, dtype=torch.float32).to(pred.device)

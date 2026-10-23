@@ -31,6 +31,11 @@ class ConfusionMatrixMeter:
         union = tp + fp + fn
         support = true_count.astype(np.int64)
         present = support > 0
+        # Class 0 is background. Reported mIoU and mDice are foreground-only
+        # macro-averages so that both metrics use the same petrographic classes.
+        foreground_present = present.copy()
+        if self.num_classes > 0:
+            foreground_present[0] = False
 
         def ratio(numerator, denominator):
             out = np.full(self.num_classes, np.nan, dtype=np.float64)
@@ -53,8 +58,14 @@ class ConfusionMatrixMeter:
         total = cm.sum()
         return {
             "pixel_accuracy": float(tp.sum() / total) if total else None,
-            "mean_iou": float(np.nanmean(iou[present])) if present.any() else None,
-            "mean_dice": float(np.nanmean(dice[present])) if present.any() else None,
+            "mean_iou": (
+                float(np.nanmean(iou[foreground_present]))
+                if foreground_present.any() else None
+            ),
+            "mean_dice": (
+                float(np.nanmean(dice[foreground_present]))
+                if foreground_present.any() else None
+            ),
             "confusion_matrix": self.matrix.tolist(),
             "per_class": per_class,
         }
