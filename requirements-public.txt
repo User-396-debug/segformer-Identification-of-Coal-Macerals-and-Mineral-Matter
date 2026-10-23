@@ -1,0 +1,13 @@
+# Install a CUDA-compatible torch/torchvision pair separately for the target GPU.
+numpy
+PyYAML
+tqdm
+albumentations
+opencv-python
+Pillow
+scikit-learn
+scipy
+matplotlib
+seaborn
+timm
+fvcore

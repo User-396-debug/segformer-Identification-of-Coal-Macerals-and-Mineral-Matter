@@ -1,0 +1,39 @@
+data:
+  train_images: data/train/images
+  train_masks: data/train/masks
+  val_images: data/val/images
+  val_masks: data/val/masks
+  test_images: data/test/images
+  test_masks: data/test/masks
+  image_size: 512
+model:
+  model_size: b1
+  num_classes: 5
+  dropout_rate: 0.3
+  drop_path_rate: 0.15
+  use_edge_enhancement: true
+  use_color_attention: true
+  use_green_aux_head: true
+training:
+  # Original full ECSegFormer training path used for the main model.
+  num_epochs: 300
+  batch_size: 8
+  learning_rate: 0.0001
+  weight_decay: 0.0001
+  gradient_clip_norm: 1.0
+loss:
+  class_weights: [1.0, 1.4, 2.6, 1.2, 1.2]
+  focal_gamma: 1.5
+  green_pixel_weight: 10.0
+  red_pixel_weight: 4.0
+  focal_weight: 0.5
+  dice_weight: 0.3
+  iou_weight: 0.2
+  use_green_aux_loss: true
+  green_aux_weight: 0.3
+  green_aux_pos_weight: 60.0
+  iou_class_weights: [1.0, 1.0, 3.0, 1.0, 1.0]
+optimization:
+  freeze_backbone: false
+device: cuda
+num_workers: 4

@@ -1,0 +1,45 @@
+experiment:
+  name: segnext_tiny_baseline
+  split_id: fixed_split_v1
+  primary_metric: mean_iou
+  class_names: [background, red, green, blue, yellow]
+
+data:
+  manifest: experiments/manifests/fixed_split_v1.csv
+  image_size: 512
+  sampler_min_red: 1
+  sampler_min_green: 1
+
+model:
+  num_classes: 5
+  pretrained: pretrained/mscan_t.pth
+  drop_path_rate: 0.1
+
+training:
+  num_epochs: 50
+  batch_size: 4
+  learning_rate: 0.0001
+  weight_decay: 0.0001
+  gradient_clip_norm: 1.0
+  deterministic: true
+  scheduler:
+    type: warmup_cosine
+    warmup_epochs: 3
+    warmup_start_factor: 0.2
+    decay_epochs: 50
+    minimum_factor: 0.05
+
+loss:
+  class_weights: [1.0, 1.4, 2.6, 1.2, 1.2]
+  focal_gamma: 1.5
+  green_pixel_weight: 10.0
+  red_pixel_weight: 4.0
+  focal_weight: 0.5
+  dice_weight: 0.3
+  iou_weight: 0.2
+  green_aux_weight: 0.0
+  green_aux_pos_weight: 1.0
+  iou_class_weights: [1.0, 1.0, 3.0, 1.0, 1.0]
+
+device: cuda
+num_workers: 4

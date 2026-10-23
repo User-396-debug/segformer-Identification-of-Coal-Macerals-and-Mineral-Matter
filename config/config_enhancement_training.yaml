@@ -1,0 +1,91 @@
+# 增强模块训练配置文件
+# 冻结主干网络，只训练边缘增强和颜色注意力模块
+# 针对红色类别优化版本
+
+# 数据配置
+data:
+  train_images: "data/train/images"
+  train_masks: "data/train/masks"
+  val_images: "data/val/images"
+  val_masks: "data/val/masks"
+  image_size: 512
+  enable_green_augmentation: true  # 启用绿色类别专项数据增强
+  green_focus_patch: true          # 含绿色样本进行ROI聚焦
+  green_patch_prob: 0.5            # 执行绿色裁剪的概率（适当减弱，保留更多全局上下文）
+  green_patch_min_size: 256        # 裁剪最小边长
+  green_patch_scale: 0.5           # 相对于原图的裁剪比例（略微放大裁剪区域）
+  sampler_min_red: 1               # 每个batch至少包含的红色样本数
+  sampler_min_green: 2             # 每个batch至少包含的绿色样本数
+
+# 模型配置
+model:
+  model_size: "b1"
+  num_classes: 5
+  dropout_rate: 0.3
+  drop_path_rate: 0.15
+  use_edge_enhancement: true   # 启用边缘增强模块
+  use_color_attention: true    # 启用颜色注意力模块
+  use_green_aux_head: true     # 启用绿色辅助预测头
+
+# 训练配置
+training:
+  num_epochs: 300  # Original full ECSegFormer training path
+  batch_size: 8  # Original full-training batch size
+  learning_rate: 0.0001  # 全量训练学习率（与原始SegFormer训练一致）
+  weight_decay: 0.0001
+  gradient_clip_norm: 1.0  # 梯度裁剪阈值
+  
+  # 学习率调度器
+  scheduler:
+    type: "plateau"  # 使用ReduceLROnPlateau
+    mode: "max"  # 监控验证IoU最大化
+    factor: 0.5  # 学习率减半
+    patience: 3  # 3个epoch无改善则调整（更频繁）
+    min_lr: 0.000001  # 最小学习率
+
+# 损失函数配置 - 增强模块训练版本（像素级加权 + Dice Loss组合）
+loss:
+  type: "focal"
+  # 类别权重说明：[背景, 红色, 绿色, 蓝色, 黄色]
+  # 调高绿色类别权重，轻微降低红色权重，聚焦绿色IoU
+  class_weights: [1.0, 1.4, 2.6, 1.2, 1.2]
+  focal_gamma: 1.5  # 适中的gamma值，增强模块会处理细节
+  
+  # 像素级加权配置（针对稀疏小目标）- 适中权重
+  green_pixel_weight: 10.0  # 绿色类别像素权重×10
+  red_pixel_weight: 4.0     # 红色类别像素权重×4（略微减弱，避免压制绿色）
+  
+  # 组合损失权重配置 - 加入IoU Loss并对绿色类别加权
+  focal_weight: 0.5  # Focal Loss权重
+  dice_weight: 0.3   # Dice Loss权重
+  iou_weight: 0.2    # IoU Loss权重（直接优化IoU，重点照顾绿色类别）
+  
+  # 绿色类别辅助损失（启用单独的绿色二分类分支，提升绿色召回）
+  use_green_aux_loss: true
+  green_aux_weight: 0.3        # 辅助损失权重（与主损失同量级，但不过度主导）
+  green_aux_pos_weight: 60.0   # BCE正样本权重（提高绿色像素召回）
+  
+  # 渐进式权重调整策略（保持关闭，先观察新损失的稳定性）
+  use_progressive_weights: false
+  progressive_start_epoch: 15
+  progressive_weights: [1.0, 2.0, 3.0, 1.3, 1.3]
+
+  # IoU Loss的类别权重（针对绿色类别加大IoU梯度）
+  iou_class_weights: [1.0, 1.0, 3.0, 1.0, 1.0]
+
+# 设备配置
+device: "cuda"
+num_workers: 4
+
+# 优化策略配置
+optimization:
+  # 红色类别专项优化
+  red_class_focus: true
+  red_class_weight: 3.0  # 红色类别权重倍数
+  
+  # 是否冻结主干网络（当前策略：全量训练以恢复性能）
+  freeze_backbone: false  # 改为false，全量训练（推荐：先恢复原始性能）
+  # 提前解冻decoder策略（方案1）
+  unfreeze_decoder_epoch: 12  # 在Epoch 12解冻解码器（提前解冻）
+  unfreeze_decoder_lr_ratio: 0.4  # 解码器使用当前学习率的40%
+  unfreeze_decoder_condition: "always"  # 解冻条件: "always"（总是解冻）或 "if_green_low"（绿色IoU<0.20时解冻）

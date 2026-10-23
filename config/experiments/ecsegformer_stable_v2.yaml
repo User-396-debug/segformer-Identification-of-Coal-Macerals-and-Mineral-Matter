@@ -1,0 +1,59 @@
+experiment:
+  name: ecsegformer_stable_v2
+  split_id: fixed_split_v1
+  primary_metric: mean_iou
+  class_names: [background, red, green, blue, yellow]
+
+data:
+  manifest: experiments/manifests/fixed_split_v1.csv
+  image_size: 512
+  enable_green_augmentation: true
+  sampler_min_red: 1
+  sampler_min_green: 1
+  # Do not force an extra green sample into every batch. Natural batches that
+  # already contain green remain unchanged.
+  sampler_green_requirement_probability: 0.25
+
+model:
+  model_size: b1
+  num_classes: 5
+  pretrained: pretrained/mit_b1.pth
+  dropout_rate: 0.3
+  drop_path_rate: 0.15
+  use_edge_enhancement: true
+  use_color_attention: true
+  use_green_aux_head: true
+  # Batch size is only four, so GroupNorm is more stable in newly initialized
+  # enhancement branches. Residual blending bounds their early influence.
+  enhancement_group_norm: true
+  enhancement_residual_blend: 0.75
+
+training:
+  num_epochs: 50
+  batch_size: 4
+  learning_rate: 0.0001
+  weight_decay: 0.0001
+  gradient_clip_norm: 1.0
+  deterministic: true
+  scheduler:
+    type: warmup_cosine
+    warmup_epochs: 1
+    warmup_start_factor: 1.0
+    minimum_factor: 0.05
+
+loss:
+  # Keep sparse-class emphasis, but remove the previous stack of very large
+  # green multipliers that could dominate red/yellow learning.
+  class_weights: [1.0, 1.2, 2.0, 1.1, 1.2]
+  focal_gamma: 1.5
+  green_pixel_weight: 5.0
+  red_pixel_weight: 3.0
+  focal_weight: 0.5
+  dice_weight: 0.3
+  iou_weight: 0.2
+  green_aux_weight: 0.1
+  green_aux_pos_weight: 20.0
+  iou_class_weights: [1.0, 1.0, 1.5, 1.0, 1.1]
+
+device: cuda
+num_workers: 4

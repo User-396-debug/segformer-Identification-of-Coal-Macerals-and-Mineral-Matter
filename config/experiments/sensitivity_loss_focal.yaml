@@ -1,0 +1,7 @@
+experiment: {name: sensitivity_loss_focal, split_id: fixed_split_v1, primary_metric: mean_iou, class_names: [background, red, green, blue, yellow]}
+data: {manifest: experiments/manifests/fixed_split_v1.csv, image_size: 512, enable_green_augmentation: true, sampler_min_red: 1, sampler_min_green: 1}
+model: {model_size: b1, num_classes: 5, pretrained: pretrained/mit_b1.pth, dropout_rate: 0.3, drop_path_rate: 0.15, use_edge_enhancement: true, use_color_attention: true, use_green_aux_head: true, edge_enhancement_version: v1, edge_dilations: [1, 2, 4], cam_strength: 1.0}
+training: {num_epochs: 50, batch_size: 4, learning_rate: 0.0001, weight_decay: 0.0001, gradient_clip_norm: 1.0, deterministic: true, scheduler: {factor: 0.5, patience: 3, min_lr: 0.000001}}
+loss: {class_weights: [1.0, 1.4, 2.6, 1.2, 1.2], focal_gamma: 1.5, green_pixel_weight: 10.0, red_pixel_weight: 4.0, focal_weight: 0.60, dice_weight: 0.25, iou_weight: 0.15, green_aux_weight: 0.3, green_aux_pos_weight: 60.0, iou_class_weights: [1.0, 1.0, 3.0, 1.0, 1.0]}
+device: cuda
+num_workers: 4
