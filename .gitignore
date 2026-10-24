@@ -37,6 +37,8 @@ tmp/
 *.json
 *.csv
 *.tsv
+!experiments/manifests/
+!experiments/manifests/fixed_split_v1.csv
 
 # Local diagnostics, deployment notes, and historical analysis drafts
 CLOUD_SERVER_GUIDE.md

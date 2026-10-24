@@ -69,11 +69,16 @@ data/
   test/masks/
 ```
 
-For the fixed-split experiments, use a manifest with image-level source-group
-identifiers. Offline augmented files use names containing `_aug_`; their source
-group must be kept in the same split as the original image. Do not upload the
-source images or masks to this repository without confirming the applicable
-copyright and data-use permissions.
+The exact image-group partition used for the reported experiments is provided
+in `experiments/manifests/fixed_split_v1.csv`. It contains 725 original training
+images, 148 validation images, and 145 reserved test images. An additional 250
+offline-augmented derivatives occur only in the training split, giving 975,
+148, and 145 effective entries, respectively. Offline augmented files use names
+containing `_aug_`; their source group is kept in the same split as the original
+image. The manifest contains identifiers, relative paths, split assignments,
+class-presence signatures, and class pixel counts, but does not contain image or
+mask data. Do not upload the source images or masks to this repository without
+confirming the applicable copyright and data-use permissions.
 
 ## Training protocols
 
