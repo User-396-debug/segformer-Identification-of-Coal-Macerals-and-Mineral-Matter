@@ -88,6 +88,12 @@ experiments/segnext_official_smoke.py
 experiments/train_segnext_official.py
 
 # Historical local-only model/config implementations
+config/experiments/ablation_base.yaml
+config/experiments/ablation_cam.yaml
+config/experiments/ablation_eem.yaml
+config/experiments/ablation_eem_cam.yaml
+config/experiments/ablation_eem_v2.yaml
+config/experiments/ablation_eem_v2_1.yaml
 config/config.yaml
 config/config_green_*.yaml
 config/config_improved*.yaml

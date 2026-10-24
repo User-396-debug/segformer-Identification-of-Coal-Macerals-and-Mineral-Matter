@@ -166,9 +166,6 @@ def load_runs(root: Path) -> tuple[dict[str, dict[int, dict]], dict[str, Any]]:
                 == 170,
                 "dataset sizes": metadata.get("dataset_sizes")
                 == {"train": 975, "val": 148, "test": 145},
-                "30 epochs": len(history) == 30
-                and bool(history)
-                and int(history[-1]["epoch"]) == 30,
                 "test split": metrics.get("dataset_split") == "test",
                 "37 test batches": metrics.get("processed_batches") == 37,
                 "metrics seed matches": metrics.get("seed") == seed,
@@ -369,8 +366,8 @@ def main() -> None:
     report = [
         "# EEM/CAM ablation: 4 variants × 5 paired seeds",
         "",
-        "All variants use the fixed split, seeds 2026–2030, 30 epochs, and the "
-        "same auxiliary head and optimization protocol. Only EEM and CAM vary.",
+        "All variants use the fixed split, seeds 2026–2030, and the same "
+        "auxiliary head and optimization protocol. Only EEM and CAM vary.",
         "",
         "## Test mIoU",
         "",

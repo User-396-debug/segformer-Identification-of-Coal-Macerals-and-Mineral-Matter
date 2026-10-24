@@ -140,11 +140,9 @@ The `config/experiments/` directory contains configurations for:
 - split-robustness and diagnostic experiments
 
 The controlled protocols are intentionally distinct: the formal repeated-run
-comparison uses 50 epochs and batch size 4 for every compared model; the EEM/CAM
-ablation configurations use 30 epochs and batch size 4; the parameter and loss
-sensitivity configurations use 50 epochs and batch size 4. These settings must
-not be confused with the separate original full ECSegFormer path above, which
-uses 300 epochs and batch size 8.
+comparison and the parameter and loss sensitivity configurations use 50 epochs
+and batch size 4. These settings must not be confused with the separate original
+full ECSegFormer path above, which uses 300 epochs and batch size 8.
 
 Results from different experiment families should not be pooled unless their
 data manifest, training budget, optimizer, scheduler, loss settings, and seed
