@@ -139,7 +139,6 @@ SegFormer baseline and ECSegFormer. Paths can be overridden with `ECS_CONFIG`,
 The `config/experiments/` directory contains configurations for:
 
 - the primary SegFormer versus ECSegFormer comparison
-- EEM/CAM ablation experiments
 - dilation, CAM-strength, and loss-weight sensitivity analyses
 - additional baseline comparisons
 - split-robustness and diagnostic experiments
