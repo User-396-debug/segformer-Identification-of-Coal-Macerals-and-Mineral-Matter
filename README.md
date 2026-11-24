@@ -13,9 +13,9 @@ segmentation objective for five classes:
 
 The repository is intended for code review and reproducibility. The source
 photomicrographs, derived masks, and manuscript files are not included because
-their redistribution requires separate permission. One verified inference
-checkpoint from the controlled main-comparison experiment is available in
-`model_weights/`.
+their redistribution requires separate permission. Verified ECSegFormer-B1
+and SegFormer-B1 inference checkpoints from the controlled main-comparison
+experiment are available in `model_weights/`.
 
 ## Repository scope
 
@@ -176,10 +176,10 @@ units, class order, and experimental-series boundaries.
 ## Data and model availability
 
 The source image archive and derived annotations are not redistributed here.
-A verified ECSegFormer-B1 checkpoint for seed 2026 is provided in
-`model_weights/` together with its resolved configuration. It corresponds to
-the controlled 50-epoch, batch-size-4 main-comparison protocol and should not
-be confused with the separate original 300-epoch training path.
+Verified ECSegFormer-B1 and SegFormer-B1 checkpoints for seed 2026 are provided
+in `model_weights/` together with their release configurations. They correspond
+to the controlled 50-epoch, batch-size-4 main-comparison protocol and should
+not be confused with the separate original 300-epoch training path.
 
 ## License
 
