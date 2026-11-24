@@ -7,7 +7,7 @@ segmentation objective for five classes:
 
 1. background
 2. vitrinite
-3. mineral matter
+3. minerals
 4. liptinite
 5. inertinite
 
@@ -26,6 +26,7 @@ Tracked files should normally be limited to:
 - `config/`: training and experiment configurations
 - `experiments/`: training, evaluation, split, analysis, and verification scripts
 - `scripts/`: repository and document utilities
+- `results/`: manuscript-aligned run-level metrics
 - top-level Python entry points and dependency files
 
 The local `.gitignore` excludes data, image files, checkpoints, pretrained
@@ -151,6 +152,12 @@ full ECSegFormer path above, which uses 300 epochs and batch size 8.
 Results from different experiment families should not be pooled unless their
 data manifest, training budget, optimizer, scheduler, loss settings, and seed
 protocol are identical.
+
+## Public numerical results
+
+The final seed-level metrics used in the revised manuscript are provided in
+`results/`. The accompanying README defines the foreground-only metric policy,
+units, class order, and experimental-series boundaries.
 
 ## Reproducibility notes
 

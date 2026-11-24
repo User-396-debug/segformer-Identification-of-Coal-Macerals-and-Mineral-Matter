@@ -7,7 +7,7 @@ main-comparison experiment:
 - model: ECSegFormer-B1 with EEM, CAM, and the mineral auxiliary head
 - run: seed 2026, fixed split `fixed_split_v1`
 - input size: 512 x 512 pixels
-- classes: background, vitrinite, mineral matter, liptinite, inertinite
+- classes: background, vitrinite, minerals, liptinite, inertinite
 
 The public file contains model tensors only. Optimizer state, training history,
 run metadata, and evaluation results are not included. The exported state

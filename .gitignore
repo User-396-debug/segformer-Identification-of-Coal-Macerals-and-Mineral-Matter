@@ -37,6 +37,9 @@ tmp/
 *.json
 *.csv
 *.tsv
+!results/
+!results/*.csv
+!results/README.md
 !experiments/manifests/
 !experiments/manifests/fixed_split_v1.csv
 
